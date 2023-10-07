@@ -25,7 +25,7 @@
 . Green LED
 . Red LED
 . Buzzer
-. Jumpers
+. Jumper wires
 . Battery Holder with switch on/off
 . 4X 1.5 Battery
  * 
