@@ -1,0 +1,78 @@
+
+#include <LiquidCrystal.h>
+const int rs = 12, en = 11, d4 = 7, d5 = 6, d6 = 5, d7 = 4;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+#define trigPin  2
+#define echoPin 3
+#define ledGreen 9
+#define ledRed 8
+#define alarm 10
+
+int range = 5;//range in inches
+
+void setup() {
+ 
+
+  lcd.begin(16,2);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(ledGreen, OUTPUT);
+  pinMode(ledRed, OUTPUT);
+  digitalWrite(ledGreen, HIGH);
+  digitalWrite(ledRed, LOW);
+}
+
+void loop() {
+  lcd.setCursor(0, 1);
+
+  long duration, cm;
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  cm= duration*0.034/2;
+  Serial.print(cm);
+  Serial.print("cm");
+  Serial.println();
+  
+  lcd.setCursor(0,0); // Sets the location at which subsequent text written to the LCD will be displayed
+lcd.print("Distance: "); // Prints string "Distance" on the LCD
+lcd.print(cm); // Prints the distance value from the sensor
+lcd.print(" cm");
+delay(500);
+
+  if(cm < 5) {
+    Serial.println("DANGER");
+    
+    lcd.setCursor(0, 1);
+    lcd.print("GL:0");
+    lcd.setCursor(4, 1);
+    lcd.print(",RL:1");
+    lcd.setCursor(9, 1);
+    lcd.print(",BUZZ:1");
+    
+    digitalWrite(ledGreen, LOW);
+    digitalWrite(ledRed, HIGH); 
+    tone(alarm, 2000); 
+    delay(100);
+  } else {
+    Serial.println("GOOD");
+    
+    lcd.setCursor(0, 1);
+    lcd.print("GL:1");
+    lcd.setCursor(4, 1);
+    lcd.print(",RL:0");
+    lcd.setCursor(9, 1);
+    lcd.print(",BUZZ:0");
+     digitalWrite(ledGreen, HIGH);
+     digitalWrite(ledRed, LOW); 
+     noTone(alarm);
+     delay(100);
+  }  
+  
+  delay(10);
+}
+
